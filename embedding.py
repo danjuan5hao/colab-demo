@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-
-from gensim.models.KeyedVectors import load_word2vec_format
+import gensim 
+# from gensim.models.KeyedVectors import load_word2vec_format
 import torch 
 import torch.nn as nn 
-from transformers import AutoModel
+# from transformers import AutoModel
 
 # class TransformerEmbedding:
 #     def __init__(self, pretrain_weight):
@@ -14,18 +14,19 @@ from transformers import AutoModel
 
 
 class FastEmbedding(nn.Module):
-    def __init__(self, file, dim=300, fine_tune=False):
+    def __init__(self, file, dim, fine_tune=False):
         super(FastEmbedding, self).__init__()
-        model = load_word2vec_format(file, binary=False)
+        model = gensim.models.KeyedVectors.load_word2vec_format(file, binary=False)
         self.itos = model.index2word
         vocab_size = len(self.itos)
-        self.embedding = nn.Embedding(vocab_size, dim)
-        self.embedding.from_pretrained(model.vectors)
+        self.embedding = nn.Embedding(vocab_size, dim, padding_idx=0)
+        self.embedding.from_pretrained(torch.from_numpy(model.vectors))
+
         if fine_tune == False:
             for param in self.embedding.parameters():
                 param.requires_grad = False
         
-    def foward(self, x):
+    def forward(self, x):
         return self.embedding(x)
 
 class MergeEmbedding(nn.Module):
