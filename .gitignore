@@ -1,4 +1,5 @@
-*/.vscode/
-*/data/*.txt
 */.ipynb_checkpoints/
+*/.vscode/
 */__pycache__/
+*/data/
+*/runs/
